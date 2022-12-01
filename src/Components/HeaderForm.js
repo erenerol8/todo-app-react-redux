@@ -1,17 +1,16 @@
-import { nanoid } from "@reduxjs/toolkit";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addTodo } from "../redux/todos/todosSlice";
+import { addTodoAsync } from "../redux/todos/todosSlice";
 
 const HeaderForm = () => {
   const [title, setTitle] = useState("");
 
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(addTodo({ id: nanoid(), title, completed: false }));
+    await dispatch(addTodoAsync(title));
     setTitle("");
   };
 

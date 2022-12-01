@@ -1,10 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 export const getTodosAsync = createAsyncThunk(
   "todos/getTodosAsync",
   async () => {
     const res = await fetch("http://localhost:7000/todos");
     return await res.json();
+  }
+);
+
+export const addTodoAsync = createAsyncThunk(
+  "todo/addTodoAsync",
+  async (data) => {
+    const res = await axios("http://localhost:7000/todos", data);
+    return res.data;
   }
 );
 
@@ -16,9 +25,6 @@ export const todosSlice = createSlice({
     error: null,
   },
   reducers: {
-    addTodo: (state, action) => {
-      state.items.push(action.payload);
-    },
     toggle: (state, action) => {
       const { id } = action.payload;
       const item = state.items.find((item) => item.id === id);
@@ -32,6 +38,7 @@ export const todosSlice = createSlice({
     },
   },
   extraReducers: {
+    //for get data
     [getTodosAsync.pending]: (state, action) => {
       state.isLoading = true;
     },
@@ -43,8 +50,12 @@ export const todosSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message;
     },
+    //add todo
+    [addTodoAsync.fulfilled]: (state, action) => {
+      state.items.push(action.payload);
+    },
   },
 });
 
-export const { addTodo, toggle, destroy } = todosSlice.actions;
+export const { toggle, destroy } = todosSlice.actions;
 export default todosSlice.reducer;
